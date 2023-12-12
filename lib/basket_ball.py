@@ -182,3 +182,89 @@ def game_dict():
             ]
         }
     }
+
+# def get_player(name):
+#     home_player = [player for player in game_dict()['home']['players'] if player['name'] == name]
+#     away_player = [player for player in game_dict()['away']['players'] if player['name'] == name]
+#     return home_player[0] if len(home_player) > 0 else away_player[0]
+
+def all_players():
+    all_players = {}
+    dict = game_dict()
+    for key in dict: #get the current team
+        #key will be either 'home' or 'away'
+        cur_team = dict[key]
+        all_cur_team_players = cur_team['players']
+        for player in all_cur_team_players: #loop through current team's players
+            #player['name'] for the key (ex. "jarrett allen") and player for value(the entire object)
+            all_players[player['name']] = player 
+    return all_players
+
+def get_player(name):
+    return all_players()[name]
+    
+def get_team(name):
+    dict = game_dict()
+    for key in dict: #'home' or 'away'
+        if dict[key]['team_name'] == name:
+            return dict[key] #the entire object
+    return None 
+
+def num_points_per_game(name):
+    return get_player(name)["points_per_game"]
+
+def player_age(name):
+    return get_player(name)["age"]
+
+def team_colors(team_name):
+    return get_team(team_name)['colors']
+
+#when you are iterating over an object, you are iterating over the keys
+# for team in dict
+# 1. home
+# 2. away 
+# 3. ....
+def team_names():
+    # [return for element in array if conditional]
+    dict = game_dict()
+    return [
+    #what we want to return: team['team_name']
+        dict[key]['team_name'] for 
+    #what we are looping over: loop over each key in object
+        key 
+        in dict
+    ]
+    #[dict[key]['team_name'] for key in dict]
+
+def player_numbers(team_name):
+    team_players = get_team(team_name)['players']
+    #[return for el in iterator]
+    #return player['number'] 
+    #player 
+    #team_players
+    return[player['number'] for player in team_players]
+    #in JS: team_players.map(player => player['number'])
+
+
+def player_stats(name):
+    return get_player(name)
+
+def average_rebounds_by_shoe_brand():
+    shoes = {}
+    players = all_players()
+    #iterate over players 
+    for player_name in players: #player_name is only the key
+        try:
+            cur_player = players[player_name]
+            #for player's rebounds
+            rebounds = cur_player['rebounds_per_game']
+            #append to shoes[brand]
+            shoes[cur_player['shoe_brand']].append(rebounds)
+        except KeyError:
+            shoes[cur_player['shoe_brand']] = [cur_player['rebounds_per_game']]
+    #sum, average
+    for shoe_brand in shoes: #shoe_brand is only the key
+        rebounds = shoes[shoe_brand]
+        avg = sum(rebounds)/len(rebounds)
+        # NEEDS DOUBLE SPACE AFTER : FOR THE TEST TO PASS
+        print(f'{shoe_brand}:  {"{:.2f}".format(avg)}')
